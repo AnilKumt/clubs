@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
 import Events from "./components/Events";
 import Navbar from "./components/Navbar";
-// import GDG from "./pages/GDG";
-// import Dataworks from "./pages/Dataworks";
-// import Bitsquad from "./pages/Bitsquad";
+import GDG from "./components/Gdg";
+import Dataworks from "./components/Dataworks";
+import Bitsquad from "./components/Bitsquad";
 
 function App() {
   return (
@@ -15,9 +15,9 @@ function App() {
         <Route path="/" element={<Landing />} /> {/* Landing page with GSAP */}
         <Route path="/events" element={<Events />} />
         
-        {/* <Route path="/gdg" element={<GDG />} />
+        <Route path="/gdg" element={<GDG />} />
         <Route path="/dataworks" element={<Dataworks />} />
-        <Route path="/bitsquad" element={<Bitsquad />} /> */}
+        <Route path="/bitsquad" element={<Bitsquad />} />
        
       </Routes>
        </div>
