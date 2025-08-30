@@ -11,12 +11,12 @@ function Navbar({
   const [active, setActive] = useState(null);
   return (
     <div
-      className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}>
+      className={cn("fixed top-7 inset-x-0 max-w-2xl mx-auto z-50", className)}>
         
       <Menu setActive={setActive}>
-        <MenuItem setActive={setActive} active={active} item="Home">
+        <Link to='/'><MenuItem setActive={setActive} active={active} item="Home"> </MenuItem></Link>
           
-        </MenuItem>
+
         <MenuItem setActive={setActive} active={active} item="Our Clubs">
           <div className="flex flex-col space-y-4 text-sm">
             <HoveredLink href="/web-dev">GDG</HoveredLink>

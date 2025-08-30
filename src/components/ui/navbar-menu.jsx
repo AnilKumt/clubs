@@ -2,6 +2,8 @@
 import React from "react";
 import { motion } from "motion/react";
 
+
+
 const transition = {
   type: "spring",
   mass: 0.5,
@@ -21,10 +23,10 @@ export const MenuItem = ({
     <div onMouseEnter={() => setActive(item)} className="relative ">
       <motion.p
         transition={{ duration: 0.3 }}
-        className="cursor-pointer text-[1.3rem] text-black hover:opacity-[0.9] dark:text-white hover:bg-black/10 px-4 py-2 rounded-full transition-all ease-in-out">
+        className="cursor-pointer text-black hover:opacity-[0.9] dark:text-white">
         {item}
       </motion.p>
-      {active !== null && children&& (
+      {active !== null && (
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -58,8 +60,9 @@ export const Menu = ({
 }) => {
   return (
     <nav
+      // resets the state
       onMouseLeave={() => setActive(null)}
-      className="relative rounded-full border border-transparent dark:bg-black dark:border-white/[0.2] bg-white shadow-input flex justify-between gap-2.5 space-x-4 px-4 py-4 shadow-xl ">
+      className="relative rounded-full border border-transparent dark:bg-black dark:border-white/[0.2] bg-white shadow-input flex justify-center space-x-4 px-8 py-6 ">
       {children}
     </nav>
   );
@@ -98,7 +101,7 @@ export const HoveredLink = ({
   return (
     <a
       {...rest}
-      className="text-neutral-700 text-[1.2rem] dark:text-neutral-200 hover:text-black ">
+      className="text-neutral-700 dark:text-neutral-200 hover:text-black ">
       {children}
     </a>
   );

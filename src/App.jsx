@@ -10,13 +10,17 @@ function App() {
   return (
     <Router>
       <Navbar />
+      <div className="pt-28 lg:pt-20">
       <Routes>
         <Route path="/" element={<Landing />} /> {/* Landing page with GSAP */}
         <Route path="/events" element={<Events />} />
+        
         {/* <Route path="/gdg" element={<GDG />} />
         <Route path="/dataworks" element={<Dataworks />} />
         <Route path="/bitsquad" element={<Bitsquad />} /> */}
+       
       </Routes>
+       </div>
     </Router>
   );
 }
