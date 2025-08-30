@@ -1,49 +1,23 @@
-// App.jsx
-import { useLayoutEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Navbar from "./components/Navbar.jsx";
-
-gsap.registerPlugin(ScrollTrigger);
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Landing from "./components/Landing";
+import Events from "./components/Events";
+import Navbar from "./components/Navbar";
+// import GDG from "./pages/GDG";
+// import Dataworks from "./pages/Dataworks";
+// import Bitsquad from "./pages/Bitsquad";
 
 function App() {
-  useLayoutEffect(() => {
-   
-    const stackSections = gsap.utils.toArray(".stack-section");
-
-    stackSections.forEach((section, i) => {
-      gsap.set(section, { zIndex: i });
-
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top", 
-        pin: true,
-        pinSpacing: false, 
-        end: "+=100%", 
-      });
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
-
   return (
-    <>
-      <Navbar className="top-2" />
-      <div className="flex min-h-screen items-center justify-center bg-orange-700 text-5xl text-white">
-        HOME
-      </div>
-      <div className="stack-section flex min-h-screen items-center justify-center bg-red-500 text-5xl text-white">
-        GDG
-      </div>
-      <div className="stack-section flex min-h-screen items-center justify-center bg-amber-400 text-5xl">
-        Dataworks
-      </div>
-      <div className="stack-section flex min-h-screen items-center justify-center bg-green-400 text-5xl">
-        Bitsquad
-      </div>
-    </>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Landing />} /> {/* Landing page with GSAP */}
+        <Route path="/events" element={<Events />} />
+        {/* <Route path="/gdg" element={<GDG />} />
+        <Route path="/dataworks" element={<Dataworks />} />
+        <Route path="/bitsquad" element={<Bitsquad />} /> */}
+      </Routes>
+    </Router>
   );
 }
 

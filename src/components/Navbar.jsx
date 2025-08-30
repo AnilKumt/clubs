@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "./ui/navbar-menu";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router";
 
 
 function Navbar({
@@ -24,9 +25,9 @@ function Navbar({
           </div>
         </MenuItem>
         
-        <MenuItem setActive={setActive} active={active} item="Events">
-          
-        </MenuItem>
+        
+          <Link to='/events'><MenuItem setActive={setActive} active={active} item="Events"> </MenuItem></Link>
+       
 
         <MenuItem setActive={setActive} active={active} item="Blogs">
           
