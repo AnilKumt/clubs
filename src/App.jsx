@@ -2,9 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
 import Events from "./components/Events.jsx";
 import Navbar from "./components/Navbar";
-import GDG from "./components/GDG";
-import Datawork from "./components/Datawork";
-import Bitsquad from "./components/bitsquard";
+import GDG from "./components/Gdg";
+import Dataworks from "./components/Dataworks";
+import Bitsquad from "./components/Bitsquad";
+
 
 function App() {
   return (
