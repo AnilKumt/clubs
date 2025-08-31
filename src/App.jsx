@@ -3,8 +3,8 @@ import Landing from "./components/Landing";
 import Events from "./components/Events";
 import Navbar from "./components/Navbar";
 import GDG from "./components/Gdg";
-import Dataworks from "./components/Dataworks";
-import Bitsquad from "./components/Bitsquad";
+import Datawork from "./components/Datawork";
+import Bitsquad from "./components/bitsquard";
 
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
         <Route path="/events" element={<Events />} />
         <Route path="/club/gdg" element={<GDG/>} />
         <Route path="/club/datawork" element={<Datawork/>} />
-        <Route path="/club/bitsquard" element={<Bitsquad/>} />
+        <Route path="/club/bitsquad" element={<Bitsquad/>} />
       </Routes>
        </div>
     </Router>
