@@ -6,7 +6,6 @@ import GDG from "./components/Gdg";
 import Dataworks from "./components/Dataworks";
 import Bitsquad from "./components/Bitsquad";
 
-
 function App() {
   return (
     <Router>
@@ -16,7 +15,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/events" element={<Events />} />
           <Route path="/club/gdg" element={<GDG />} />
-          <Route path="/club/datawork" element={<Datawork />} />
+          <Route path="/club/datawork" element={<Dataworks />} />
           <Route path="/club/bitsquard" element={<Bitsquad />} />
         </Routes>
       </div>
