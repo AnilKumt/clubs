@@ -16,6 +16,8 @@ import { faFacebookSquare, faYoutubeSquare, faInstagram,
   faLinkedin} from "@fortawesome/free-brands-svg-icons";
 import collegeLogo from "../assets/iiitdmk.png";
 
+// import { Home } from "lucide-react";
+import Home from "./ui/home.jsx";
 gsap.registerPlugin(ScrollTrigger);
 
 function Landing() {
@@ -28,13 +30,17 @@ function Landing() {
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
+        start: "top top",
         pin: true,
+        pinSpacing: false,
+        end: "+=100%",
         pinSpacing: false,
         end: "+=100%",
       });
     });
 
     return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
@@ -185,7 +191,7 @@ function Landing() {
   return (
     <>
       <div className="flex min-h-screen items-center justify-center bg-orange-700 text-5xl text-white">
-        HOME
+        <Home />
       </div>
       {/* GDG PAGE */}
       <div
@@ -461,3 +467,4 @@ function Landing() {
 }
 
 export default Landing;
+
