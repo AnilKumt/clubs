@@ -20,8 +20,8 @@ function Navbar({ className }) {
         <MenuItem setActive={setActive} active={active} item="Our Clubs">
           <div className="flex flex-col space-y-4 text-sm">
             <HoveredLink href="/club/gdg"><Link to='/club/gdg'>GDG</Link></HoveredLink>
-            <HoveredLink href="/club/datawork">Dataworks</HoveredLink>
-            <HoveredLink href="/club/bitsquad">Bitsquad</HoveredLink>
+            <HoveredLink href="/club/datawork"><Link to='/club/datawork'>Dataworks</Link></HoveredLink>
+            <HoveredLink href="/club/bitsquad"><Link to='/club/bitsquad'>Bitsquad</Link></HoveredLink>
           </div>
         </MenuItem>
 
