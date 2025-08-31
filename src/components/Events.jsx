@@ -1,8 +1,16 @@
-import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
+import React, { useState } from "react";
+import {
+  format,
+  isSameDay,
+  addDays,
+  subDays,
+  getDaysInMonth,
+  getDay,
+  startOfMonth,
+  endOfMonth,
+  endOfWeek,
+  startOfWeek,
+} from "date-fns";
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -10,66 +18,195 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { format, isSameDay, addDays, subDays } from "date-fns";
 
-const dummyEvents = [
+// Local utility function to combine class names
+const cn = (...classes) => {
+  return classes.filter(Boolean).join(" ");
+};
+
+// --- Local UI Components (recreated for single-file use) ---
+
+// A simple button component with different styles
+const Button = ({ children, variant, size, onClick, className }) => {
+  let baseClasses = "rounded-md transition-colors";
+
+  if (variant === "outline") {
+    baseClasses = cn(
+      baseClasses,
+      "border border-gray-300 text-gray-700 hover:bg-gray-100"
+    );
+  } else {
+    baseClasses = cn(baseClasses, "bg-gray-900 text-white hover:bg-gray-800");
+  }
+
+  if (size === "icon") {
+    baseClasses = cn(baseClasses, "p-2");
+  } else {
+    baseClasses = cn(baseClasses, "py-2 px-4");
+  }
+
+  return (
+    <button className={cn(baseClasses, className)} onClick={onClick}>
+      {children}
+    </button>
+  );
+};
+
+// A simple badge component
+const Badge = ({ className, children }) => {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+};
+
+// Card components
+const Card = ({ children, className }) => (
+  <div className={cn("bg-white border rounded-lg shadow-sm", className)}>
+    {children}
+  </div>
+);
+const CardHeader = ({ children, className }) => (
+  <div className={cn("p-6", className)}>{children}</div>
+);
+const CardTitle = ({ children, className }) => (
+  <h2 className={cn("text-lg font-semibold text-gray-900", className)}>
+    {children}
+  </h2>
+);
+const CardContent = ({ children, className }) => (
+  <div className={cn("p-6 pt-0", className)}>{children}</div>
+);
+
+// Simple Popover component
+const Popover = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const trigger = React.Children.toArray(children).find(
+    (child) => child.type === PopoverTrigger
+  );
+  const content = React.Children.toArray(children).find(
+    (child) => child.type === PopoverContent
+  );
+
+  const clonedTrigger =
+    trigger &&
+    React.cloneElement(trigger, { onClick: () => setIsOpen(!isOpen) });
+
+  return (
+    <div className="relative">
+      {clonedTrigger}
+      {isOpen && (
+        <div className="absolute z-50 mt-2 w-auto min-w-[200px] rounded-md border bg-white p-4 shadow-lg animate-in fade-in-0 slide-in-from-top-2">
+          {content.props.children}
+        </div>
+      )}
+    </div>
+  );
+};
+const PopoverTrigger = ({ children, asChild, onClick }) => {
+  if (asChild && children) {
+    return React.cloneElement(children, { onClick });
+  }
+  return <div onClick={onClick}>{children}</div>;
+};
+const PopoverContent = ({ children }) => <div>{children}</div>;
+
+// Simplified Calendar Component
+const CalendarComponent = ({ mode, selected, onSelect }) => {
+  const [currentDate, setCurrentDate] = useState(selected || new Date());
+  const startOfSelectedMonth = startOfMonth(currentDate);
+  const endOfSelectedMonth = endOfMonth(currentDate);
+  const startOfWeekDay = getDay(startOfSelectedMonth);
+  const daysInMonth = getDaysInMonth(currentDate);
+
+  const days = [];
+  // Fill in empty days at the start of the month
+  for (let i = 0; i < startOfWeekDay; i++) {
+    days.push(null);
+  }
+  // Fill in the days of the month
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(i);
+  }
+
+  const handlePreviousMonth = () => {
+    setCurrentDate(subDays(startOfSelectedMonth, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(addDays(endOfSelectedMonth, 1));
+  };
+
+  return (
+    <div className="p-3">
+      <div className="flex justify-between items-center pb-4">
+        <Button size="icon" variant="outline" onClick={handlePreviousMonth}>
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <div className="text-sm font-medium">
+          {format(currentDate, "MMMM yyyy")}
+        </div>
+        <Button size="icon" variant="outline" onClick={handleNextMonth}>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="grid grid-cols-7 text-center text-sm">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
+          <div key={index} className="text-gray-500 font-medium">
+            {day}
+          </div>
+        ))}
+        {days.map((day, index) => (
+          <div
+            key={index}
+            className={cn(
+              "p-2 text-center rounded-full cursor-pointer hover:bg-gray-100",
+              day === null && "pointer-events-none",
+              selected &&
+                day &&
+                isSameDay(
+                  new Date(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    day
+                  ),
+                  selected
+                ) &&
+                "bg-gray-900 text-white hover:bg-gray-800"
+            )}
+            onClick={() =>
+              day &&
+              onSelect(
+                new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+              )
+            }
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const eventInfo = [
   {
     id: 1,
-    title: "Hack the Future 2025",
+    title: "GDG Event",
     club: "GDG",
-    date: new Date(),
-    end: new Date(2025, 8, 10, 17, 0),
-    venue: "Auditorium Hall A",
-    status: "upcoming",
-  },
-  {
-    id: 2,
-    title: "AI for Everyone Workshop",
-    club: "DataWorks",
-    date: new Date(),
-    end: new Date(2025, 8, 15, 18, 0),
-    venue: "Lab 3, CS Department",
-    status: "upcoming",
-  },
-  {
-    id: 3,
-    title: "Bits & Bytes Coding Contest",
-    club: "BitSquad",
-    date: new Date(),
-    end: new Date(2025, 8, 18, 13, 0),
-    venue: "Computer Centre Lab 1",
-    status: "upcoming",
-  },
-  {
-    id: 4,
-    title: "DevFest Campus Edition",
-    club: "GDG",
-    date: new Date(),
-    end: new Date(2025, 8, 22, 18, 0),
-    venue: "Main Seminar Hall",
-    status: "upcoming",
-  },
-  {
-    id: 5,
-    title: "Data Visualization Bootcamp",
-    club: "DataWorks",
-    date: new Date(2025, 8, 25, 15, 0),
-    end: new Date(2025, 8, 25, 19, 0),
-    venue: "Library Conference Room",
-    status: "upcoming",
-  },
-  {
-    id: 6,
-    title: "AlgoMania – Coding Night",
-    club: "BitSquad",
-    date: new Date(2025, 8, 30, 19, 0),
-    end: new Date(2025, 8, 30, 23, 0),
-    venue: "Innovation Hub",
+    date: new Date(2025, 7, 31, 10, 0),
+    end: new Date(2025, 7, 31, 12, 0),
+    venue: "Computing Lab",
     status: "upcoming",
   },
 ];
 
-// Badge colors for clubs
 const clubColors = {
   GDG: "bg-blue-100 text-blue-800",
   DataWorks: "bg-green-100 text-green-800",
@@ -77,10 +214,10 @@ const clubColors = {
 };
 
 const Events = () => {
-  const [date, setDate] = useState(new Date());
-  const [view, setView] = useState("day");
+  // Update the initial state to the date of the first event
+  const [date, setDate] = useState(eventInfo[0].date);
 
-  const todaysEvents = dummyEvents.filter((event) =>
+  const todaysEvents = eventInfo.filter((event) =>
     date ? isSameDay(event.date, date) : false
   );
 
@@ -93,62 +230,58 @@ const Events = () => {
   };
 
   return (
-    <div className="px-14 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-14 space-y-6 bg-gray-50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Club Events</h1>
-          <p className="text-muted-foreground">
-            Stay updated with upcoming events from GDG, DataWorks & BitSquad
+          <h1 className="text-3xl font-bold text-gray-900">Club Events</h1>
+          <p className="text-gray-600">
+            Stay updated with upcoming events from GDG, DataWorks & BitSquad.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Calendar</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center p-4">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border shadow-sm"
-              captionLayout="dropdown"
-            />
-            <div className="flex justify-between w-full mt-4">
-              <Button variant="outline" onClick={() => setView("calendar")}>
-                Month View
-              </Button>
-              <Button variant="outline" onClick={() => setView("day")}>
-                Day View
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Events */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>
-              {date ? format(date, "EEEE, MMMM do, yyyy") : "Events"}
-            </CardTitle>
-            <div className="flex items-center gap-2">
+      <div className="grid grid-cols-1 gap-6">
+        <Card className="rounded-xl shadow-lg border border-gray-200">
+          <CardHeader className="flex flex-col sm:flex-row items-center justify-between p-6">
+            <div className="flex items-center gap-2 mb-4 sm:mb-0">
               <Button variant="outline" size="icon" onClick={handlePreviousDay}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
+              <CardTitle className="text-xl font-semibold text-gray-800 min-w-[200px] text-center">
+                {date ? format(date, "EEEE, MMMM do, yyyy") : "Events"}
+              </CardTitle>
               <Button variant="outline" size="icon" onClick={handleNextDay}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-          </CardHeader>
 
-          <CardContent>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <CalendarComponent
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                />
+              </PopoverContent>
+            </Popover>
+          </CardHeader>
+          <CardContent className="p-6 pt-0">
             {todaysEvents.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  No events scheduled for this day
+                <p className="text-gray-500">
+                  No events scheduled for this day.
                 </p>
               </div>
             ) : (
@@ -156,35 +289,32 @@ const Events = () => {
                 {todaysEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="flex gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    className="flex flex-col sm:flex-row gap-4 p-4 border rounded-xl hover:bg-gray-100 transition-colors duration-200 shadow-sm"
                   >
-                    <div className="flex flex-col items-center justify-center w-16 text-center">
-                      <span className="text-sm font-medium">
-                        {format(event.date, "h:mm")}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {format(event.date, "a")}
+                    <div className="flex items-start sm:items-center w-full sm:w-1/4">
+                      <span className="text-lg font-medium text-gray-900">
+                        {format(event.date, "h:mm a")}
                       </span>
                     </div>
-
                     <div className="flex-1">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <h3 className="font-medium">{event.title}</h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {event.title}
+                        </h3>
                         <Badge className={clubColors[event.club]}>
                           {event.club}
                         </Badge>
                       </div>
-
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Clock className="mr-1 h-3 w-3" />
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600">
+                        <div className="flex items-center">
+                          <Clock className="mr-1 h-3.5 w-3.5" />
                           <span>
                             {format(event.date, "h:mm a")} -{" "}
                             {format(event.end, "h:mm a")}
                           </span>
                         </div>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <MapPin className="mr-1 h-3 w-3" />
+                        <div className="flex items-center">
+                          <MapPin className="mr-1 h-3.5 w-3.5" />
                           <span>{event.venue}</span>
                         </div>
                       </div>
